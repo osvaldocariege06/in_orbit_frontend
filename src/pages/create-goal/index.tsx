@@ -3,7 +3,7 @@ import letsStartIllustration from '../../assets/svgs/lets-start-illustration.svg
 import { Plus } from 'lucide-react'
 import { useState } from 'react'
 import { CreateGoalModal } from '../../components/CreateGoal'
-import Button from '../../components/Button'
+import { Button } from '../../components/ui/button'
 
 function CreateGoals() {
   const [show, setShow] = useState(false)
@@ -27,16 +27,14 @@ function CreateGoals() {
       <img src={logo} alt="Logo In.Orbit" />
       <img src={letsStartIllustration} alt="lets start illustration" />
 
-      <div className="max-w-80 w-full">
-        <p className="text-center leading-relaxed tracking-normal">
+      <div className="max-w-80 w-full flex flex-col justify-center items-center">
+        <p className="text-center leading-relaxed tracking-normal mb-4">
           Você ainda não cadastrou nenhuma meta, que tal cadastrar um agora
           mesmo?
         </p>
-        <Button type="button" onClick={handleOpenCreateGoal}>
-          <Button.Icon>
-            <Plus className="size-4" />
-          </Button.Icon>
-          <Button.Text text="Cadastrar meta" />
+        <Button onClick={handleOpenCreateGoal}>
+          <Plus className="size-4" />
+          Cadastrar metaaa
         </Button>
       </div>
     </div>

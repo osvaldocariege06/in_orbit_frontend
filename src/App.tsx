@@ -1,24 +1,23 @@
+import { createBrowserRouter, RouterProvider } from 'react-router-dom'
+import { ErrorPage } from './error-page'
+import CreateGoals from './pages/create-goal'
+import Summary from './pages/summary'
 
-import { useCallback, useState } from "react"
-import TripDetails from "./pages/trip-details"
-import CreateTrip from "./pages/create-trip"
 function App() {
+  const router = createBrowserRouter([
+    {
+      path: '/',
+      element: <CreateGoals />,
+      errorElement: <ErrorPage />,
+    },
+    {
+      path: '/summary/:summaryId',
+      element: <Summary />,
+      errorElement: <ErrorPage />,
+    },
+  ])
 
-  const [changePage, setChangePage] = useState<'Create-trip' | 'Details-trip'>('Create-trip')
-
-  const Pages = useCallback(() => {
-    if(changePage === 'Details-trip') {
-      return <TripDetails setChangePages={setChangePage} />
-    } else {
-      return <CreateTrip setChangePages={setChangePage} />
-    }
-  }, [changePage, setChangePage])
-  
-
-  return (
-    // <CreateTrip setChangePages={setChangePage} />
-    <Pages />
-  )
+  return <RouterProvider router={router} />
 }
 
 export default App

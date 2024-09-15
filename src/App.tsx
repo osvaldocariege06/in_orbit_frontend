@@ -1,23 +1,17 @@
-import { createBrowserRouter, RouterProvider } from 'react-router-dom'
-import { ErrorPage } from './error-page'
 import CreateGoals from './pages/create-goal'
 import Summary from './pages/summary'
+import { useQuery } from '@tanstack/react-query'
+import { getSummary } from './http/get-summary'
+
 
 function App() {
-  const router = createBrowserRouter([
-    {
-      path: '/',
-      element: <CreateGoals />,
-      errorElement: <ErrorPage />,
-    },
-    {
-      path: '/summary/:summaryId',
-      element: <Summary />,
-      errorElement: <ErrorPage />,
-    },
-  ])
+  const { data } = useQuery({
+    queryKey: ['summary'],
+    queryFn: getSummary,
+    staleTime: 1000 * 60, // 60 seconds
+  })
 
-  return <RouterProvider router={router} />
+  return <>{data?.total && data.total > 0 ? <Summary /> : <CreateGoals />}</>
 }
 
 export default App

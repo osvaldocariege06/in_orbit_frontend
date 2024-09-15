@@ -2,17 +2,21 @@ import GoalPerWeekItem from './GoalPerWeekItem'
 import Button from './Button'
 import { GoalsPerWeek } from '../utils/goal-per-week-array'
 import { type FormEvent, useState } from 'react'
-// import { useNavigate } from 'react-router-dom'
+import { createGoal } from '../http/create-goal'
+import { useQueryClient } from '@tanstack/react-query'
 
 interface CreateGoalProps {
   closeModal: () => void
 }
 
 export function CreateGoalModal({ closeModal }: CreateGoalProps) {
-  // const navigate = useNavigate()
+  const queryClient = useQueryClient()
 
+  const [title, setTitle] = useState('')
   const [desiredWeeklyFrequency, setDesiredWeeklyFrequency] = useState(1)
   const [isLoading, setIsLoading] = useState(false)
+  const [isError, setIsError] = useState(false)
+
 
   function handleDesiredWeeklyFrequency(id: number) {
     const itemId = GoalsPerWeek.filter(item => item.id === id)
@@ -21,25 +25,34 @@ export function CreateGoalModal({ closeModal }: CreateGoalProps) {
     setDesiredWeeklyFrequency(Number(itemId))
   }
 
+  function reset() {
+    setTitle('')
+    setDesiredWeeklyFrequency(1)
+    setIsLoading(false)
+    setIsError(false)
+  }
+
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
+    
+    if (!title) {
+      setIsError(true)
+      return 
+    }
+    setIsError(false)
     setIsLoading(true)
 
-    const data = new FormData(event.currentTarget)
-
-    const title = data.get('title')
-
-    if (!title) {
-      return alert('Please digit a title')
-    }
-
-    // navigate('/goal/1')
-
-    console.log({
+    await createGoal({
       title,
-      desiredWeeklyFrequency,
+      desiredWeeklyFrequency
     })
-    setIsLoading(false)
+
+
+    queryClient.invalidateQueries({ queryKey: ['summary'] })
+    queryClient.invalidateQueries({ queryKey: ['pending-goals'] })
+
+    
+    reset()
   }
 
   return (
@@ -57,20 +70,27 @@ export function CreateGoalModal({ closeModal }: CreateGoalProps) {
           praticando toda semana.
         </p>
 
-        <div className="flex flex-col gap-2 w-full">
-          <label
-            htmlFor="title"
-            className="font-semibold text-zinc-50 text-base"
-          >
-            Qual a atividade?
-          </label>
-          <input
-            type="text"
-            name="title"
-            id="title"
-            placeholder="Praticar exercícios, meditar, etc..."
-            className="placeholder-zinc-600 outline-none shadow-md border border-zinc-800 rounded-lg h-12 text-sm px-4 bg-black"
-          />
+        <div className="flex flex-col">
+          <div className="flex flex-col gap-2 w-full">
+            <label
+              htmlFor="title"
+              className="font-semibold text-zinc-50 text-base"
+            >
+              Qual a atividade?
+            </label>
+            <input
+              type="text"
+              name="title"
+              id="title"
+              onChange={(e) => setTitle(e.target.value)}
+              value={title}
+              placeholder="Praticar exercícios, meditar, etc..."
+              className="placeholder-zinc-600 outline-none shadow-md border border-zinc-800 rounded-lg h-12 text-sm px-4 bg-black"
+            />
+          </div>
+          {isError && (
+            <span className="text-sm text-red-400 mt-2">Informe a atividade que deseja realizar</span>
+          )}
         </div>
 
         <div className="flex flex-col gap-2 w-full">

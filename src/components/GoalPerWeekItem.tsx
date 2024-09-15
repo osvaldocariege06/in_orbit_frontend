@@ -26,7 +26,11 @@ export default function GoalPerWeekItem({
       ) : (
         <Circle className="size-4 text-zinc-600" />
       )}
-      <span className="text-sm text-center">{props.id}x na semana</span>
+      {props.id !== 7 ? (
+        <span className="text-sm text-center">{props.id}x na semana</span>
+      ) : (
+        <span className="text-sm text-center">Todos dias na semana</span>
+      )}
       {props.icon}
     </button>
   )
